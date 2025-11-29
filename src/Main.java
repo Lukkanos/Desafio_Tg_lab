@@ -7,45 +7,27 @@ public class Main {
         // Escolhe uma matriz solucionada para usar no VALIDADOR (VALIDATOR)
         Integer[][][] solvedMatrix = SudokuSource.getSolvedMatrix(1);
 
-        // ....
 
         // Escolhe uma matriz NÃO resolvida para usar no SOLUCIONADOR (SOLVER)
-        Integer[][][] unsolvedMatrix = SudokuSource.getUnsolvedMatrix(1);
-        
-        // ....
-        for(int m = 1 ; m < 4 ; m++){
-            System.out.println("Matriz " + m);
-            Integer[][] sudoku = sudokuCompleto(m);
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    
-                    int num = sudoku[i][j];
-                    
-                    if (num == 0)
-                    continue;
-                    
-                    boolean resultado = validaLinha(sudoku, i, j, num) || validaLinha(sudoku, i, j, num) || validaQuadrado(sudoku, i, j, num);
+        Integer[][][] unsolvedMatrix = SudokuSource.getUnsolvedMatrix(2);
+        Integer[][] sudoku = sudokuCompleto(unsolvedMatrix);
+        imprime(sudoku);
 
-                    if (!resultado){
-                        System.out.println("Linha " + i + " coluna " + j + " " + num + " inválido\n");
-                    }
-                }
-                
-            }
+        if (resolver(sudoku)) {
             imprime(sudoku);
-        }
+        } else {
+            System.out.println("Não foi possível resolver o Sudoku.");
+    }    }
 
-    }
-
-    public static Integer[][] sudokuCompleto(int id) {
+    public static Integer[][] sudokuCompleto(Integer[][][] matriz) {
         Integer[][] sudoku = new Integer[9][9];
-        Integer[][][] solved = SudokuSource.getSolvedMatrix(id);
+        
 
         int index = 0;
         for (int blocoLinha = 0; blocoLinha < 3; blocoLinha++) {
             for (int blocoColuna = 0; blocoColuna < 3; blocoColuna++) {
 
-                Integer[][] bloco = solved[index++];
+                Integer[][] bloco = matriz[index++];
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -111,5 +93,27 @@ public class Main {
         System.out.println("\n");
 
     }
+    
+public static boolean resolver(Integer[][] sudoku) {
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            if (sudoku[i][j] == null ) { 
+                for (int k = 1; k <= 9; k++) {
+                    if (validaLinha(sudoku, i, j, k) &&validaColuna(sudoku, i, j, k) && validaQuadrado(sudoku, i, j, k)) {
+                        sudoku[i][j] = k; 
+
+                        if (resolver(sudoku)) {
+                            return true; 
+                        }
+
+                        sudoku[i][j] = null; 
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true; 
+}
 }
 
